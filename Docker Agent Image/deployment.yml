@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: myweb-deploy
+    labels:
+        app: myweb 
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: myweb 
+    template:
+        metadata:
+            labels:
+                app: myweb 
+        spec:
+            containers:
+             -  name: web-con
+                image: surinder2000/web-app
+                ports:
+                 -  containerPort: 80
+                imagePullPolicy: Always
+
+
+

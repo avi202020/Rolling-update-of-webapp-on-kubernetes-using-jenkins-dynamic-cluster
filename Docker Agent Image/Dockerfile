@@ -16,6 +16,7 @@ COPY client.key /root/.kube
 COPY client.crt /root/.kube
 COPY ca.crt /root/.kube
 COPY config /root/.kube
+COPY deployment.yml /root 
 CMD ["/usr/sbin/sshd","-D"] && /bin/bash 
 
 

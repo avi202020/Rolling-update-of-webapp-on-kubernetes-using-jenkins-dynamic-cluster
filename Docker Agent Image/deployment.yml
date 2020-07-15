@@ -16,7 +16,7 @@ spec:
         spec:
             containers:
              -  name: web-con
-                image: surinder2000/web-app
+                image: surinder2000/web-app:latest
                 ports:
                  -  containerPort: 80
                 imagePullPolicy: Always

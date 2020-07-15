@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Config
+
+clusters:
+- cluster:
+    server: https://192.168.99.110:8443
+    certificate-authority: ca.crt
+  name: mycluster
+
+contexts:
+- context:
+    cluster: mycluster
+    user: surinder
+
+users:
+- name: surinder
+  user:
+    client-key: client.key
+    client-certificate: client.crt
+

@@ -1,5 +1,5 @@
 # Continuous deployment of webapp on Kubernetes using Jenkins
-In this article i am going to create an environment for continuous deployment of the web app on top of Kubernetes with zero down time using rolling updates strategy of Kubernetes with Jenkins. The dynamic distributive cluster is created in Jenkins for the deployment of the web app on Kubernetes
+In this article i am going to create an environment for continuous deployment of the web app on top of Kubernetes with zero down time using rolling updates strategy of Kubernetes with Jenkins. Configuring dynamic distributive cluster in Jenkins for deploying the web app on Kubernetes using Jenkins slave node
 
 ## Pre-requisites
 * Must have minikube installed

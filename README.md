@@ -91,27 +91,41 @@ Run the following command to build an image
     docker build -t image_name:tag
     
 ### Configure docker server so that any docker client can access it
-* Go to docker service file
+* Go to docker service file 
 * To get path of docker service file run the following command
 
     systemctl status docker
     
+![Docker configuration1](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/dockerconf1.png)
+
+* Add the tcp protocol with available port number in it
+
+![Docker configuration2](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/dockerconf2.png)
+
+* After adding tcp protocol reload daemon and restart the docker service, to do it use the following commands
     
-* Add tcp protocol in it 
+      systemctl daemon-reload
+      systemctl restart docker
+   
 
 ### Install the required plugins for creating dynamic distributive cluster
-To install plugins got to **Manage Jenkins -> Manage Plugins** click on available, search the required plugins and install them. Must install the following plugins
+To install plugins go to **Manage Jenkins -> Manage Plugins** click on available, search the required plugins and install them. Must install the following plugins
 * Docker 
 * Yet Another Docker
 
 ### Configure dynamic distributive cluster in Jenkins by using Docker 
 * Go to **Manage Jenkins -> Manage clouds and nodes -> Configure clouds** and click on Add a new cloud and fill the following details
 
+![Agent configuration1](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/agentconf1.png)
+
+
 * Fill the following in Docker agent template and use the Docker images that is created above
 
+![Agent configuration2](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/agentconf2.png)
+![Agent configuration3](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/agentconf3.png)
 
 
- ### Create a Dockerfile that create container image of apache web server and copy the web pages from current workspace in container image inside the working directory of apache web server
+ ### Create a Dockerfile that creates a container image of apache web server and copy the web pages from current workspace in container image inside the working directory of apache web server
  
     FROM centos
     RUN yum install sudo -y
@@ -126,16 +140,41 @@ To install plugins got to **Manage Jenkins -> Manage Plugins** click on availabl
 #### Job1: Pull the code from Github repository when developer push the code and do the following
 * Create a container image of apache web server and copy the web pages from current workspace
 * Push the image into the Docker hub
-    
+
+In Source Control Management section put the Github repository url and branch name
+
+![Git configuration](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job11.png)
+
+In Build trigger section select Poll SCM for checking the github repository every minute
+
+![Build trigger](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job12.png)
+
+In the Build section from Add build step select Execute shell and put the following code in the command box
+
     sudo docker login
     sudo docker build -t surinder2000/web-app:latest .
     sudo docker push surinder2000/web-app:latest
+    
+![Execute shell](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job13.png)
     
 #### Job 2: Launch the web app on top of Kubernetes and do the following
 * If launching the web app first time create deployment using the images created in the previous job
 * Expose the application
 * If the application already deployed then do roll out of existing pods making zero downtime for users
-    
+
+In General section Restrict the job to run on dynamic slave node by putting the dynamic cluster label in the Label expression box
+
+![Restrict job](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job21.png)
+
+
+In Build trigger section select Build after other projects are built and put the name of Job 1 in the Project to watch box and check Trigger only if build is stable
+
+![Build trigger](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job22.png)
+
+
+In the Build section from Add build step select Execute shell and put the following code in the command box
+
+
     if kubectl get deploy | grep myweb-deploy
     then
     kubectl set image deploy/myweb-deploy web-con=surinder2000/web-app:latest
@@ -145,5 +184,16 @@ To install plugins got to **Manage Jenkins -> Manage Plugins** click on availabl
     kubectl expose deploy/myweb-deploy --port 80 --type=NodePort
     fi
 
+![Execute shell](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/job23.png)
 
-This is the pipeline view of the Jenkins jobs
+That's all our setup is ready
+
+Now as soon as the developer commit new code in the github repository, it will get automatically pulled from github by jenkins job and one container image is created in which the new code get copied and the created image pushed into the Docker hub. On success of job 1, job 2 trigger and deploy the web app with the image created in the previous job on top of Kubernetes and expose it to outside world. If already deployed then roll out the exiting pods using rolling update strategy of Kubernetes which provides zero downtime of web app in the production environment.
+
+This is the Build pipeline view of the Jenkins jobs
+
+
+![Pipeline view](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/pipelineview.png)
+
+
+### Thank you

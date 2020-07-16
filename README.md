@@ -88,7 +88,12 @@ Put the following set of commands in Dockerfile for creating the required contai
 
 Run the following command to build an image
 
-    docker build -t image_name:tag
+    docker build -t surinder2000/kubeclient:v1 . 
+    
+Run the following command to push the image into Docker hub
+
+    docker login
+    docker push surinder2000/kubeclient:v1
     
 ### Configure docker server so that any docker client can access it
 * Go to docker service file 

@@ -99,7 +99,7 @@ Run the following command to push the image into Docker hub
 * Go to docker service file 
 * To get path of docker service file run the following command
 
-    systemctl status docker
+      systemctl status docker
     
 ![Docker configuration1](https://github.com/surinder2000/Continuous-deployment-of-webapp-on-kubernetes-using-jenkins/blob/master/Screenshots/dockerconf1.png)
 
@@ -141,7 +141,7 @@ To install plugins go to **Manage Jenkins -> Manage Plugins** click on available
     CMD ["/usr/sbin/httpd","-DFOREGROUND"] && /bin/bash 
 
 
-### Create Jenkins jobs for the continuous deployment of web app on Kubernetes using rolling update stategy of Kubernetes
+### Create Jenkins jobs for the continuous deployment of web app on Kubernetes using rolling update strategy of Kubernetes
 #### Job1: Pull the code from Github repository when developer push the code and do the following
 * Create a container image of apache web server and copy the web pages from current workspace
 * Push the image into the Docker hub
